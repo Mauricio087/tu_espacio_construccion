@@ -786,12 +786,6 @@ section {
         justify-content: center;
     }
 
-    .hero {
-        background: linear-gradient(135deg, rgba(44, 90, 160, 0.9) 0%, rgba(74, 144, 226, 0.9) 100%),
-                    url('../../img/hero.jpeg') center/auto 65% no-repeat;
-        background-position: center center;
-    }
-
     .services-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
@@ -851,7 +845,7 @@ section {
 
     .hero {
         background: linear-gradient(135deg, rgba(44, 90, 160, 0.9) 0%, rgba(74, 144, 226, 0.9) 100%),
-                    url('../../img/hero.jpeg') center/auto 75% no-repeat;
+                    url('../../img/hero.jpeg?v=1') center/auto 75% no-repeat;
         background-position: center center;
     }
 }
@@ -866,7 +860,7 @@ section {
         min-height: 600px;
         /* Separamos las propiedades para asegurar compatibilidad y especificidad */
         background-image: linear-gradient(135deg, rgba(44, 90, 160, 0.4) 0%, rgba(74, 144, 226, 0.4) 100%), 
-                          url('../../img/hero.jpeg');
+                          url('../../img/hero.jpeg?v=1');
         background-position: center !important;
         background-size: cover !important;
         background-repeat: no-repeat;
