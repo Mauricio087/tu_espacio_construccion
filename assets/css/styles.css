@@ -193,32 +193,47 @@ p {
 .hero {
     height: 100vh;
     min-height: 600px;
-    background: linear-gradient(135deg, rgba(44, 90, 160, 0.9) 0%, rgba(74, 144, 226, 0.9) 100%),
-                url('../../img/hero.jpeg') center/auto 45% no-repeat;
-    display: flex;
-    align-items: center;
     position: relative;
     overflow: hidden;
-    background-attachment: scroll;
-    background-position: center center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    margin-top: 0;
+}
+
+.hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.hero-video-mb {
+    display: none;
 }
 
 .hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
 }
 
 .hero-content {
     position: relative;
     z-index: 2;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
+    display: flex;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
@@ -226,23 +241,26 @@ p {
 
 .hero-text {
     color: white;
+    max-width: 800px; /* Limit width for better readability */
 }
 
 .hero-title {
     margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .hero-subtitle {
     font-size: 1.2rem;
     margin-bottom: 2rem;
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 1);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .hero-buttons {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .hero-img {
@@ -749,11 +767,7 @@ section {
 
 /* Responsive Design */
 @media (min-width: 1200px) {
-    .hero {
-        background: linear-gradient(135deg, rgba(44, 90, 160, 0.9) 0%, rgba(74, 144, 226, 0.9) 100%),
-                    url('../../img/hero.jpeg') center/auto 35% no-repeat;
-        background-position: center center;
-    }
+    /* Hero specific overrides if needed */
 }
 
 @media (max-width: 768px) {
@@ -844,9 +858,13 @@ section {
     }
 
     .hero {
-        background: linear-gradient(135deg, rgba(44, 90, 160, 0.9) 0%, rgba(74, 144, 226, 0.9) 100%),
-                    url('../../img/hero.jpeg?v=1') center/auto 75% no-repeat;
+        background: url('../../img/hero.jpeg?v=1') center/auto 75% no-repeat;
         background-position: center center;
+    }
+
+    .hero-video,
+    .hero-overlay {
+        display: none;
     }
 }
 
@@ -858,18 +876,18 @@ section {
     .hero {
         height: 85vh;
         min-height: 600px;
-        /* Separamos las propiedades para asegurar compatibilidad y especificidad */
-        background-image: linear-gradient(135deg, rgba(44, 90, 160, 0.4) 0%, rgba(74, 144, 226, 0.4) 100%), 
-                          url('../../img/hero.jpeg?v=1');
-        background-position: center !important;
-        background-size: cover !important;
-        background-repeat: no-repeat;
+        background: transparent;
         
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 110px 20px 20px 20px; /* Padding superior compensa el navbar fijo para centrado visual */
         position: relative;
+    }
+
+    .hero-video-mb,
+    .hero-overlay {
+        display: block;
     }
     
     .hero-content {
