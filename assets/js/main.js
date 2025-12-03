@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeFormHandler();
     initializeScrollReveal();
     initializeSmoothScroll();
+    initializeNavbarState(); // Establecer estado inicial del navbar
     initializeNavbarScroll();
     initializeServiceButtons();
     
@@ -26,46 +27,181 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 });
 
-// Navegación responsive
+// Navegación responsive - Optimizada para móvil
 function initializeNavigation() {
+    let isMenuOpen = false;
+    
     navToggle.addEventListener('click', function() {
+        isMenuOpen = !isMenuOpen;
         navMenu.classList.toggle('active');
         
-        // Animar el icono hamburguesa
+        // Prevenir scroll del body cuando el menú está abierto (mejora para móvil)
+        if (isMenuOpen) {
+            document.body.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
+        } else {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+        }
+        
+        // Animar el icono hamburguesa con transición fluida
         const bars = navToggle.querySelectorAll('.bar');
         bars.forEach((bar, index) => {
-            if (navMenu.classList.contains('active')) {
+            if (isMenuOpen) {
+                bar.style.transition = 'all 0.3s ease';
                 if (index === 0) bar.style.transform = 'rotate(-45deg) translate(-5px, 6px)';
                 if (index === 1) bar.style.opacity = '0';
                 if (index === 2) bar.style.transform = 'rotate(45deg) translate(-5px, -6px)';
             } else {
+                bar.style.transition = 'all 0.3s ease';
                 bar.style.transform = '';
                 bar.style.opacity = '';
             }
         });
     });
-
+    
     // Cerrar menú al hacer clic en un enlace
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
+            isMenuOpen = false;
             navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            
             const bars = navToggle.querySelectorAll('.bar');
             bars.forEach(bar => {
+                bar.style.transition = 'all 0.3s ease';
                 bar.style.transform = '';
                 bar.style.opacity = '';
             });
         });
     });
+    
+    // Cerrar menú al hacer clic fuera (mejora para móvil)
+    document.addEventListener('click', function(event) {
+        if (isMenuOpen && !event.target.closest('.nav-menu') && !event.target.closest('.nav-toggle')) {
+            isMenuOpen = false;
+            navMenu.classList.remove('active');
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            
+            const bars = navToggle.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                bar.style.transition = 'all 0.3s ease';
+                bar.style.transform = '';
+                bar.style.opacity = '';
+            });
+        }
+    });
 }
 
-// Efectos de scroll para la navbar
+// Función para establecer el estado inicial del navbar
+function initializeNavbarState() {
+    const heroSection = document.getElementById('inicio');
+    if (!heroSection) return;
+    
+    const scrollY = window.scrollY;
+    const heroRect = heroSection.getBoundingClientRect();
+    const heroBottom = heroRect.bottom + scrollY;
+    
+    // Si estamos fuera de la sección hero, ocultar el navbar inicialmente
+    if (scrollY > heroBottom - 100) {
+        navbar.classList.add('navbar-hidden');
+    }
+    
+    // Establecer estado scrolled si es necesario
+    if (scrollY > 50) {
+        navbar.classList.add('scrolled');
+    }
+}
+
+// Efectos de scroll para la navbar - Solo aparece en hero al hacer scroll up
 function initializeNavbarScroll() {
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 100) {
+    let lastScrollY = window.scrollY;
+    let ticking = false;
+    let heroSection = document.getElementById('inicio');
+    let heroBottom = 0;
+    let isMobile = window.innerWidth <= 768;
+    
+    // Calcular la posición inferior del hero
+    function updateHeroPosition() {
+        if (heroSection) {
+            const heroRect = heroSection.getBoundingClientRect();
+            heroBottom = heroRect.bottom + window.scrollY;
+        }
+    }
+    
+    // Detectar cambios de tamaño de pantalla
+    function checkScreenSize() {
+        isMobile = window.innerWidth <= 768;
+    }
+    
+    // Calcular posición inicial
+    updateHeroPosition();
+    checkScreenSize();
+    
+    function updateNavbar() {
+        const scrollY = window.scrollY;
+        
+        // Actualizar posición del hero si cambia (por redimensionado)
+        if (!ticking) {
+            updateHeroPosition();
+        }
+        
+        // Optimización para móvil: umbral más pequeño para mejor respuesta
+        const scrollThreshold = isMobile ? 50 : 100;
+        
+        // Ocultar navbar al hacer scroll down
+        if (scrollY > lastScrollY && scrollY > scrollThreshold) {
+            navbar.classList.add('navbar-hidden');
+            
+            // Cerrar menú móvil si está abierto al ocultar navbar
+            if (navMenu && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                if (navToggle) {
+                    const bars = navToggle.querySelectorAll('.bar');
+                    bars.forEach(bar => {
+                        bar.style.transform = '';
+                        bar.style.opacity = '';
+                    });
+                }
+            }
+        } 
+        // Mostrar navbar SOLO cuando estemos en o cerca de la sección hero
+        else if (scrollY < lastScrollY && scrollY <= heroBottom - 50) {
+            navbar.classList.remove('navbar-hidden');
+        }
+        // Siempre mostrar cuando estemos muy arriba (seguridad)
+        else if (scrollY <= 50) {
+            navbar.classList.remove('navbar-hidden');
+        }
+        
+        // Agregar/quitar clase scrolled para estilos
+        if (scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
         }
+        
+        lastScrollY = scrollY;
+        ticking = false;
+    }
+    
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(updateNavbar);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', requestTick, { passive: true });
+    window.addEventListener('resize', () => {
+        updateHeroPosition();
+        checkScreenSize();
     });
 }
 
