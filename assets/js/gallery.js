@@ -52,7 +52,7 @@ const galleryData = [
         id: 7,
         filename: 'piscina7.jpeg',
         title: 'Piscina Azul Intenso con Chorros',
-        description: 'Piscina de color azul profundo, destacando cuatro columnas internas (posiblemente de hidromasaje). Enmarcada con solerones blancos en un entorno rústico.',
+        description: 'Piscina de color azul profundo, destacando cuatro columnas internas, cuya funcion es simular un asiento en el agua. Enmarcada con solerones blancos en un entorno rústico.',
         category: 'construction',
         aspectRatio: '16:9'
     },
@@ -218,8 +218,30 @@ function createGalleryItem(item, index) {
         </div>
     `;
 
-    // Agregar evento de clic
-    div.addEventListener('click', () => openModal(index));
+    // Manejar evento click
+    div.addEventListener('click', (e) => {
+        // Si se hace click en el botón de expandir, abrir modal siempre
+        if (e.target.closest('.gallery-expand')) {
+            openModal(index);
+            e.stopPropagation();
+            return;
+        }
+
+        // Detectar si es vista móvil (<= 768px)
+        if (window.innerWidth <= 768) {
+            // En móvil: primer click muestra info (toggle active), segundo click en expandir abre modal
+            // Cerrar otros items activos para mantener limpieza
+            const currentActive = document.querySelector('.gallery-item.active');
+            if (currentActive && currentActive !== div) {
+                currentActive.classList.remove('active');
+            }
+
+            div.classList.toggle('active');
+        } else {
+            // En desktop: click abre modal (hover ya muestra info)
+            openModal(index);
+        }
+    });
 
     return div;
 }
@@ -227,18 +249,18 @@ function createGalleryItem(item, index) {
 // Inicializar filtros
 function initializeFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
-    
+
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
             // Remover clase active de todos los botones
             filterButtons.forEach(btn => btn.classList.remove('active'));
-            
+
             // Agregar clase active al botón clickeado
             this.classList.add('active');
-            
+
             // Obtener filtro
             const filter = this.getAttribute('data-filter');
-            
+
             // Aplicar filtro con animación
             applyFilterWithAnimation(filter);
         });
@@ -248,14 +270,14 @@ function initializeFilters() {
 // Aplicar filtro con animación
 function applyFilterWithAnimation(filter) {
     const galleryItems = document.querySelectorAll('.gallery-item');
-    
+
     // Animar salida de elementos actuales
     galleryItems.forEach((item, index) => {
         setTimeout(() => {
             item.classList.add('fade-out');
         }, index * 50);
     });
-    
+
     // Esperar a que termine la animación y renderizar nuevos elementos
     setTimeout(() => {
         renderGallery(filter);
@@ -265,12 +287,12 @@ function applyFilterWithAnimation(filter) {
 // Aplicar animaciones a la galería
 function applyGalleryAnimations() {
     const galleryItems = document.querySelectorAll('.gallery-item');
-    
+
     galleryItems.forEach((item, index) => {
         // Resetear animación
         item.style.animation = 'none';
         item.offsetHeight; // Trigger reflow
-        
+
         // Aplicar nueva animación con delay
         setTimeout(() => {
             item.style.animation = `fadeInUp 0.6s ease-out forwards`;
