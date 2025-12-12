@@ -980,8 +980,9 @@ section {
         gap: 2rem;
     }
 
-    .about-text {
-        text-align: center;
+    .about-text,
+    .about-text p {
+        text-align: center !important;
     }
 
     .why-us-content {
