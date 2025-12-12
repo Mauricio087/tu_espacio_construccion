@@ -980,6 +980,10 @@ section {
         gap: 2rem;
     }
 
+    .about-text {
+        text-align: center;
+    }
+
     .why-us-content {
         grid-template-columns: 1fr;
         gap: 3rem;
