@@ -8,14 +8,7 @@ const galleryData = [
         category: 'construction',
         aspectRatio: '16:9'
     },
-    {
-        id: 2,
-        filename: 'pscina2.jpeg',
-        title: 'Piscina en Patio de Casa Nueva',
-        description: 'Piscina de color gris/azul claro, con escaleras en L y borde de solerones color arena, instalada en un patio con césped. Vista desde arriba de casas modernas.',
-        category: 'construction',
-        aspectRatio: '4:3'
-    },
+
     {
         id: 3,
         filename: 'piscina3.jpeg',
